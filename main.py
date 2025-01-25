@@ -7,9 +7,8 @@ from flask_cors import CORS
 from bg_removal import remove_bg_from_bytes
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024  # 200 MB max
+app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024
 
-# Only allow these specific origins
 CORS(app, resources={
     r"/*": {
         "origins": [
@@ -28,11 +27,6 @@ def health_check():
 
 @app.route("/remove-bg", methods=["POST"])
 def remove_bg():
-    """
-    Accept up to 5 images in 'images' form field, remove their backgrounds,
-    and return an array of base64-encoded PNGs in JSON.
-    Downscale images first and use a lighter rembg model to reduce memory usage.
-    """
     try:
         if "images" not in request.files:
             logging.warning("No 'images' field in request.")
@@ -53,7 +47,6 @@ def remove_bg():
                 logging.info(f"Background removed successfully for file {filename}")
             except Exception as e:
                 logging.error(f"Error removing background for file {filename}", exc_info=True)
-                # Return null for that file
                 results.append({"removed_b64": None})
 
         return jsonify({"images": results}), 200
