@@ -7,6 +7,7 @@ from flask_cors import CORS
 from bg_removal import remove_bg_from_bytes
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024
 
 # Example: only allow these specific origins
 CORS(app, resources={
